@@ -27,7 +27,8 @@ public class NeuralNetworkController : MonoBehaviour
             
             List<int> autoencoder = new List<int>();
             autoencoder.AddRange(network);
-            network.Reverse();
+            network.RemoveAt(network.Count - 1); // latent space is not replicated
+            network.Reverse();                   // mirror network
             autoencoder.AddRange(network);
 
             BuildMLP(autoencoder);
