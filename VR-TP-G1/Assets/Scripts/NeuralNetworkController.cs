@@ -5,20 +5,48 @@ using UnityEngine;
 public class NeuralNetworkController : MonoBehaviour
 {
     public List<int> network = new List<int>();
+
+    private enum NetworkType { MLP, AUTOENCODER };
+
+    private NetworkType network_type = NetworkType.AUTOENCODER; // TODO esto deberia ser userInput 
      
     void Start()
     {   
-        network.Add(2);
+        network.Add(2);  // TODO esto deberia ser userInput 
         network.Add(1);
         network.Add(3);
         network.Add(4);
         network.Add(4);
         network.Add(2);
+        
+        if ( network_type == NetworkType.MLP) { 
+            BuildMLP(network);
+
+        } else if (network_type == NetworkType.AUTOENCODER) {
+            Debug.Log("AUTOENCODER");
+            
+            List<int> autoencoder = new List<int>();
+            autoencoder.AddRange(network);
+            network.Reverse();
+            autoencoder.AddRange(network);
+
+            BuildMLP(autoencoder);
+        } 
+
+    }
+
+    
+    void Update()
+    {
+        
+    }
+    
+    private void BuildMLP(List<int> network) { 
+
         int layers_amount = network.Count;
         int max_neurons = 4; //network.Max(); TODO conseguir el maximo de una lista 
         int largest_layer_index = network.IndexOf(max_neurons);
 
-        //int middle_layer_index = (int) Mathf.Floor(layers_amount / 2.0F);
         float increment = 0;
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
             
@@ -42,12 +70,5 @@ public class NeuralNetworkController : MonoBehaviour
                 layer.transform.localPosition = new Vector3(layer.transform.localPosition.x, increment , layer.transform.localPosition.z);
             }
         }
-
-    }
-
-    
-    void Update()
-    {
-        
     }
 }
