@@ -75,7 +75,7 @@ public class NeuralNetworkController : MonoBehaviour
             }
         }
 
-        addConnections(1,2);
+        addConnections(1,2); // TODO for each layer 
     }
 
     private void addConnections(int first_layer, int second_layer) { 
