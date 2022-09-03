@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   network: 
+  jsonFile: {fileID: 4900000, guid: 471dc4ae1ac4260f8a649d24d1039645, type: 3}
 --- !u!4 &110867814
 Transform:
   m_ObjectHideFlags: 0
