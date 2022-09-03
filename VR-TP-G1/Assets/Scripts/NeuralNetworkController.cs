@@ -12,9 +12,9 @@ public class NeuralNetworkController : MonoBehaviour{
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private NetworkType network_type = NetworkType.MLP; // TODO esto deberia ser userInput 
+    private NetworkType network_type = NetworkType.KOHONEN; // TODO esto deberia ser userInput 
 
-    private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }}; // TODO esto deberia ser userInput 
+    private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }, { 1, 6 } }; // TODO esto deberia ser userInput 
      
     public TextAsset jsonFile;
         
@@ -59,52 +59,45 @@ public class NeuralNetworkController : MonoBehaviour{
         
     }
     
-    private void BuildMLP(List<int> network) { 
-
+    private void BuildMLP(List<int> network)
+    {
         int layers_amount = network.Count;
-        int max_neurons = 4; //network.Max(); TODO conseguir el maximo de una lista 
-        int largest_layer_index = network.IndexOf(max_neurons);
-
-        float increment = 0;
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
-            
-            // Create Layer
-            GameObject layer = new GameObject(string.Format("Layer {0}", layer_index));
-            layer.transform.parent = transform; 
-            
-            for(int neuron_index = 0; neuron_index < network[layer_index]; neuron_index++) {
-                // Create Neurons    
-                GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                neuron.name = string.Format("Neuron {0}", neuron_index);
-                neuron.transform.parent = layer.transform; 
-                neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
-
-                neuron.transform.localPosition = new Vector3(layer_index, neuron_index, 0); 
-                increment = (max_neurons - network[layer_index])/2.0F; // for centering layers in Y axis
-            }
-            
-            // Center Layer in Y axis            
-            if(layer_index != largest_layer_index) { 
-                layer.transform.localPosition = new Vector3(layer.transform.localPosition.x, increment , layer.transform.localPosition.z);
-            }
+            GameObject layer = createLayer(layer_index);
+            layer.transform.localPosition = new Vector3(layer.transform.localPosition.x, -network[layer_index]/2, layer.transform.localPosition.z);
         }
         for(int l=0; l < layers_amount-1; l++)
             addConnections(l, l+1);
+    }
+
+    private GameObject createLayer(int layer_index)
+    {
+        GameObject layer = new GameObject(string.Format("Layer {0}", layer_index));
+        layer.transform.parent = transform;
+        for (int neuron_index = 0; neuron_index < network[layer_index]; neuron_index++)
+        {
+            GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            neuron.name = string.Format("Neuron {0}", neuron_index);
+            neuron.transform.parent = layer.transform;
+            neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
+            neuron.transform.localPosition = new Vector3(layer_index, neuron_index, 0);
         }
+        return layer;
+    }
 
     private void addConnections(int first_layer, int second_layer) { 
             // Create Connection Parent 
+            GameObject layer1 = GameObject.Find("Layer " + first_layer);
+            GameObject layer2 = GameObject.Find("Layer " + second_layer);
             GameObject connections = new GameObject(string.Format("Connections {0}-{1}", first_layer, second_layer));
             connections.transform.parent = transform;
 
-            for(int first_neuron_index = 0; first_neuron_index < network[first_layer]; first_neuron_index++) {
-                for(int second_neuron_index = 0; second_neuron_index < network[second_layer]; second_neuron_index++)
+            for (int first_neuron_index = 0; first_neuron_index < layer1.transform.childCount; first_neuron_index++) {
+                for(int second_neuron_index = 0; second_neuron_index < layer2.transform.childCount; second_neuron_index++)
                 {
                     GameObject connection = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                    GameObject layer0 = GameObject.Find("Layer " + first_layer);
-                    GameObject neuronA = layer0.transform.Find("Neuron " + first_neuron_index).gameObject;
-                    GameObject layer1 = GameObject.Find("Layer " + second_layer);
-                    GameObject neuronB = layer1.transform.Find("Neuron " + second_neuron_index).gameObject;
+                    GameObject neuronA = layer1.transform.Find("Neuron " + first_neuron_index).gameObject;
+                    GameObject neuronB = layer2.transform.Find("Neuron " + second_neuron_index).gameObject;
                     Vector3 p1 = neuronA.transform.position;
                     Vector3 p2 = neuronB.transform.position;
 
@@ -134,43 +127,43 @@ public class NeuralNetworkController : MonoBehaviour{
                 neurons_amount += activations[i,j];
             }
         }
-        
-        // Create Layer
-        GameObject layer = new GameObject(string.Format("Layer 0"));
-        layer.transform.parent = transform; 
-        
-        generateNeurons(layer, neurons_amount, 0,0);
 
-        // Last Layer
+        // First Layer
+        GameObject layer = createLayer(0);
 
+        // Outside-facing plane
         GameObject last_layer = new GameObject(string.Format("Last Layer"));
         last_layer.transform.parent = transform; 
         GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         plane.transform.parent = last_layer.transform;
-
-        plane.transform.localScale = new Vector3(height/10.0F, height/10.0F, height/10.0F); 
+        plane.transform.localScale = new Vector3(height/10.0F, height/10.0F, width/10.0F); 
         plane.transform.localPosition = new Vector3(5, 0, 0); 
-        plane.transform.localRotation = Quaternion.Euler(0, 0, 90); 
+        plane.transform.localRotation = Quaternion.Euler(0, 180, 90);
 
-        GameObject neurons = new GameObject(string.Format("Last Neurons"));
-        neurons.transform.parent = last_layer.transform;
-        for (int i = 0; i < height; i++) { 
-            generateNeurons(neurons, height, 5, i);
-        }
+        // Network-facing plane
+        GameObject backplane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        backplane.transform.parent = last_layer.transform;
+        backplane.transform.localScale = new Vector3(height / 10.0F, height / 10.0F, width / 10.0F);
+        backplane.transform.localPosition = new Vector3(5, 0, 0);
+        backplane.transform.localRotation = Quaternion.Euler(0, 0, 90);
 
+        // Final Neurons
+        GameObject top_layer = new GameObject(string.Format("Layer 1"));
+        top_layer.transform.parent = last_layer.transform;
+        for (int i = 0; i < width; i++)
+            generateKohonenTopLayer(top_layer, height, 5, i);
+        top_layer.transform.localPosition = new Vector3(top_layer.transform.localPosition.x, -height/2, -width/2);
+        addConnections(0, 1);
     }
 
-    private void generateNeurons(GameObject layer, int neurons_amount, int x, int z) { 
+    private void generateKohonenTopLayer(GameObject layer, int neurons_amount, int x, int z) { 
         
-        for(int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) {
-            // Create Neurons    
+        for(int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) {  
             GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            neuron.name = string.Format("Neuron {0}", neuron_index);
+            neuron.name = string.Format("Neuron {0}", neuron_index+z*neurons_amount);
             neuron.transform.parent = layer.transform; 
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
-
-            neuron.transform.localPosition = new Vector3(x, neuron_index, z); 
-             
+            neuron.transform.localPosition = new Vector3(x, neuron_index, z);
         }
     }
 }
