@@ -66,7 +66,6 @@ public class NeuralNetworkController : MonoBehaviour{
         int layers_amount = network.Count;
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
             GameObject layer = createLayer(layer_index);
-            layer.transform.localPosition = new Vector3(layer.transform.localPosition.x, -network[layer_index]/2, layer.transform.localPosition.z);
         }
         for(int l=0; l < layers_amount-1; l++)
             addConnections(l, l+1);
@@ -82,8 +81,8 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.name = string.Format("Neuron {0}", neuron_index);
             neuron.transform.parent = layer.transform;
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
-            neuron.transform.localPosition = new Vector3(layer_index, neuron_index, 0);
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+            neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (network[layer_index]-1)/2.0f, 0);
         }
         return layer;
     }
@@ -136,38 +135,32 @@ public class NeuralNetworkController : MonoBehaviour{
 
         // Outside-facing plane
         GameObject last_layer = new GameObject(string.Format("Last Layer"));
-        last_layer.transform.parent = transform; 
-        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        last_layer.transform.parent = transform;
+        
+        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Cube);
         plane.transform.parent = last_layer.transform;
-        plane.transform.localScale = new Vector3(height/10.0F, height/10.0F, width/10.0F); 
-        plane.transform.localPosition = new Vector3(5, 0, 0); 
-        plane.transform.localRotation = Quaternion.Euler(0, 180, 90);
+        plane.transform.localScale = new Vector3(height, 0.001f, width);
+        plane.transform.localPosition = new Vector3(5, 0, 0);
+        plane.transform.localRotation = Quaternion.Euler(0, 0, 90);
 
-        // Network-facing plane
-        GameObject backplane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        backplane.transform.parent = last_layer.transform;
-        backplane.transform.localScale = new Vector3(height / 10.0F, height / 10.0F, width / 10.0F);
-        backplane.transform.localPosition = new Vector3(5, 0, 0);
-        backplane.transform.localRotation = Quaternion.Euler(0, 0, 90);
 
         // Final Neurons
-        GameObject top_layer = new GameObject(string.Format("Layer 1"));
-        top_layer.transform.parent = last_layer.transform;
+        GameObject top_neurons = new GameObject(string.Format("Layer 1"));
+        top_neurons.transform.parent = last_layer.transform;
         for (int i = 0; i < width; i++)
-            generateKohonenTopLayer(top_layer, height, 5, i);
-        top_layer.transform.localPosition = new Vector3(top_layer.transform.localPosition.x, -height/2, -width/2);
+            generateKohonenTopLayerColumn(top_neurons, height, i, width);
         addConnections(0, 1);
     }
 
-    private void generateKohonenTopLayer(GameObject layer, int neurons_amount, int x, int z) { 
-        
-        for(int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) {  
+    private void generateKohonenTopLayerColumn(GameObject layer, int rows_amount, int column, int width)
+    {
+        for(int neuron_index = 0; neuron_index < rows_amount; neuron_index++) {  
             GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            neuron.name = string.Format("Neuron {0}", neuron_index+z*neurons_amount);
+            neuron.name = string.Format("Neuron {0}", neuron_index+column* rows_amount);
             neuron.transform.parent = layer.transform; 
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
-            neuron.transform.localPosition = new Vector3(x, neuron_index, z);
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+            neuron.transform.localPosition = new Vector3(5, neuron_index - (rows_amount - 1)/2.0f, column - (width - 1) / 2.0f);
         }
     }
 }
