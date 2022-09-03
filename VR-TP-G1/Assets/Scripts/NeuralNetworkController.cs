@@ -10,34 +10,28 @@ namespace VRTP3 {
     {
         public List<int> network = new List<int>();
 
-        public enum NetworkType { MLP, AUTOENCODER };
+    private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-        private NetworkType network_type = NetworkType.MLP; // TODO esto deberia ser userInput 
+    private NetworkType network_type = NetworkType.KOHONEN; // TODO esto deberia ser userInput 
 
-        public TextAsset jsonFile;
-        
-        void Start()
-        {   
-            JsonData j = LoadJsonData();
-            if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
-                network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
-            }
-            foreach (int number in j.layers)
-            {
-                network.Add(number);
-            }
-            // network.Add(2);  // TODO esto deberia ser userInput 
-            // network.Add(1);
-            // network.Add(3);
-            // network.Add(4);
-            // network.Add(4);
-            // network.Add(2); 
+    private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }}; // TODO esto deberia ser userInput 
+     
+    void Start()
+    {   
+        network.Add(2);  // TODO esto deberia ser userInput 
+        network.Add(1);
+        network.Add(3);
+        network.Add(4);
+        network.Add(4);
+        network.Add(2); 
 
-            if ( network_type == NetworkType.MLP) { 
-            
+        switch (network_type) {
+
+            case NetworkType.MLP: 
                 BuildMLP(network);
-
-            } else if (network_type == NetworkType.AUTOENCODER) {
+                break; 
+            
+            case NetworkType.AUTOENCODER: 
                 Debug.Log("AUTOENCODER");
                 
                 List<int> autoencoder = new List<int>();
@@ -47,9 +41,15 @@ namespace VRTP3 {
                 autoencoder.AddRange(network);
 
                 BuildMLP(autoencoder);
-            } 
+                break; 
 
-        }
+            case NetworkType.KOHONEN: 
+                BuildKohonen(kohonen_activations);
+                break; 
+        }     
+
+
+    }
 
         
         void Update()
@@ -123,5 +123,56 @@ namespace VRTP3 {
             return json;
         }
     
+    }
+    
+    private void BuildKohonen(int[,] activations) { 
+        
+        int neurons_amount = 0;
+        int height = activations.GetLength(0);
+        int width = activations.GetLength(1);
+
+        for (int i=0; i < height; i++) {  // TODO tiene que haber mejor forma de sumar todo en C# 
+            for (int j=0; j < width; j++) { 
+                neurons_amount += activations[i,j];
+            }
+        }
+        
+        // Create Layer
+        GameObject layer = new GameObject(string.Format("Layer 0"));
+        layer.transform.parent = transform; 
+        
+        generateNeurons(layer, neurons_amount, 0,0);
+
+        // Last Layer
+
+        GameObject last_layer = new GameObject(string.Format("Last Layer"));
+        last_layer.transform.parent = transform; 
+        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        plane.transform.parent = last_layer.transform;
+
+        plane.transform.localScale = new Vector3(height/10.0F, height/10.0F, height/10.0F); 
+        plane.transform.localPosition = new Vector3(5, 0, 0); 
+        plane.transform.localRotation = Quaternion.Euler(0, 0, 90); 
+
+        GameObject neurons = new GameObject(string.Format("Last Neurons"));
+        neurons.transform.parent = last_layer.transform;
+        for (int i = 0; i < height; i++) { 
+            generateNeurons(neurons, height, 5, i);
+        }
+
+    }
+
+    private void generateNeurons(GameObject layer, int neurons_amount, int x, int z) { 
+        
+        for(int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) {
+            // Create Neurons    
+            GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            neuron.name = string.Format("Neuron {0}", neuron_index);
+            neuron.transform.parent = layer.transform; 
+            neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
+
+            neuron.transform.localPosition = new Vector3(x, neuron_index, z); 
+             
+        }
     }
 }
