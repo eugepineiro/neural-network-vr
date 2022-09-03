@@ -1,5 +1,5 @@
 {
-    "nn_type": "asd",
-    "layers": [2,3,4,5], 
+    "nn_type": "mlp",
+    "layers": [5, 10, 15, 10, 3, 7],
     "is_trained": true
 }

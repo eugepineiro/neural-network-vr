@@ -8,10 +8,11 @@ using Newtonsoft.Json;
 namespace VRTP3 {
 public class NeuralNetworkController : MonoBehaviour{
     public List<int> network = new List<int>();
+    public Material connectionMaterial;
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private NetworkType network_type = NetworkType.KOHONEN; // TODO esto deberia ser userInput 
+    private NetworkType network_type = NetworkType.MLP; // TODO esto deberia ser userInput 
 
     private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }}; // TODO esto deberia ser userInput 
      
@@ -87,34 +88,32 @@ public class NeuralNetworkController : MonoBehaviour{
                 layer.transform.localPosition = new Vector3(layer.transform.localPosition.x, increment , layer.transform.localPosition.z);
             }
         }
-
-        addConnections(1,2); // TODO for each layer 
-    }
+        for(int l=0; l < layers_amount-1; l++)
+            addConnections(l, l+1);
+        }
 
     private void addConnections(int first_layer, int second_layer) { 
-
             // Create Connection Parent 
-            GameObject connections = new GameObject(string.Format("Connections {0} {1}", first_layer, second_layer));
-            connections.transform.parent = transform; 
-            int first_layer_neurons = network[first_layer]; 
-            int second_layer_neurons = network[second_layer];
-        
+            GameObject connections = new GameObject(string.Format("Connections {0}-{1}", first_layer, second_layer));
+            connections.transform.parent = transform;
+
             for(int first_neuron_index = 0; first_neuron_index < network[first_layer]; first_neuron_index++) {
-                for(int second_neuron_index = 0; second_neuron_index < network[second_layer]; second_neuron_index++) {
-
+                for(int second_neuron_index = 0; second_neuron_index < network[second_layer]; second_neuron_index++)
+                {
                     GameObject connection = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    GameObject layer0 = GameObject.Find("Layer " + first_layer);
+                    GameObject neuronA = layer0.transform.Find("Neuron " + first_neuron_index).gameObject;
+                    GameObject layer1 = GameObject.Find("Layer " + second_layer);
+                    GameObject neuronB = layer1.transform.Find("Neuron " + second_neuron_index).gameObject;
+                    Vector3 p1 = neuronA.transform.position;
+                    Vector3 p2 = neuronB.transform.position;
 
-                    connection.name = string.Format("Connection {0}{1}-{2}{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
-                    connection.transform.parent = connections.transform; 
-                    connection.transform.localScale = new Vector3(0.05F, 0.5F, 0.05F);
-
-                    GameObject layer0 = GameObject.Find("Layer 0");
-                    GameObject neuron00 = layer0.transform.Find("Neuron 0").gameObject; 
-
-                    GameObject layer1 = GameObject.Find("Layer 1");
-                    GameObject neuron10 = layer1.transform.Find("Neuron 0").gameObject; 
-                    float x = (neuron10.transform.position.x + neuron00.transform.position.x) / 2.0F;
-                    //connection.transform.position = new Vector3(0, x, 0);
+                    connection.GetComponent<Renderer>().material = connectionMaterial;
+                    connection.name = string.Format("Connection {0}.{1}-{2}.{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
+                    connection.transform.parent = connections.transform;
+                    connection.transform.localScale = new Vector3(0.03F, Vector3.Distance(p1, p2)/2, 0.03F);
+                    connection.transform.position = (p2 + p1) / 2.0F;
+                    connection.transform.up = p2-p1;
                 } 
             }    
     }
