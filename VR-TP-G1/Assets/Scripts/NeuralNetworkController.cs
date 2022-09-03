@@ -7,8 +7,10 @@ using Newtonsoft.Json;
 
 namespace VRTP3 {
 public class NeuralNetworkController : MonoBehaviour{
+
     public List<int> network = new List<int>();
     public Material connectionMaterial;
+    public Material neuronMaterial;
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
@@ -81,6 +83,7 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.parent = layer.transform;
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
             neuron.transform.localPosition = new Vector3(layer_index, neuron_index, 0);
+            neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
         }
         return layer;
     }
@@ -101,10 +104,10 @@ public class NeuralNetworkController : MonoBehaviour{
                     Vector3 p1 = neuronA.transform.position;
                     Vector3 p2 = neuronB.transform.position;
 
-                    connection.GetComponent<Renderer>().material = connectionMaterial;
+                    connection.GetComponent<MeshRenderer>().material = connectionMaterial;
                     connection.name = string.Format("Connection {0}.{1}-{2}.{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
                     connection.transform.parent = connections.transform;
-                    connection.transform.localScale = new Vector3(0.03F, Vector3.Distance(p1, p2)/2, 0.03F);
+                    connection.transform.localScale = new Vector3(0.01F, Vector3.Distance(p1, p2)/2, 0.01F);
                     connection.transform.position = (p2 + p1) / 2.0F;
                     connection.transform.up = p2-p1;
                 } 
@@ -164,6 +167,7 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.parent = layer.transform; 
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
             neuron.transform.localPosition = new Vector3(x, neuron_index, z);
+            neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
         }
     }
 }
