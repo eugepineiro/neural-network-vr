@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.IO;
+using Newtonsoft.Json;
 
-public class NeuralNetworkController : MonoBehaviour
-{
+namespace VRTP3 {
+public class NeuralNetworkController : MonoBehaviour{
     public List<int> network = new List<int>();
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
@@ -13,14 +15,16 @@ public class NeuralNetworkController : MonoBehaviour
 
     private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }}; // TODO esto deberia ser userInput 
      
-    void Start()
-    {   
-        network.Add(2);  // TODO esto deberia ser userInput 
-        network.Add(1);
-        network.Add(3);
-        network.Add(4);
-        network.Add(4);
-        network.Add(2); 
+    public TextAsset jsonFile;
+        
+    void Start() {   
+        JsonData j = LoadJsonData();
+        if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
+            network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
+        }
+        foreach (int number in j.layers) {
+            network.Add(number);
+        }
 
         switch (network_type) {
 
@@ -48,7 +52,7 @@ public class NeuralNetworkController : MonoBehaviour
 
     }
 
-    
+        
     void Update()
     {
         
@@ -94,7 +98,7 @@ public class NeuralNetworkController : MonoBehaviour
             connections.transform.parent = transform; 
             int first_layer_neurons = network[first_layer]; 
             int second_layer_neurons = network[second_layer];
-         
+        
             for(int first_neuron_index = 0; first_neuron_index < network[first_layer]; first_neuron_index++) {
                 for(int second_neuron_index = 0; second_neuron_index < network[second_layer]; second_neuron_index++) {
 
@@ -113,6 +117,11 @@ public class NeuralNetworkController : MonoBehaviour
                     //connection.transform.position = new Vector3(0, x, 0);
                 } 
             }    
+    }
+
+    private JsonData LoadJsonData() {
+        JsonData json = JsonUtility.FromJson<JsonData>(jsonFile.text);
+        return json;
     }
     
     private void BuildKohonen(int[,] activations) { 
@@ -165,4 +174,5 @@ public class NeuralNetworkController : MonoBehaviour
              
         }
     }
+}
 }
