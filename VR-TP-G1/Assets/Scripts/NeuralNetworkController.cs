@@ -14,10 +14,11 @@ public class NeuralNetworkController : MonoBehaviour{
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private NetworkType network_type = NetworkType.KOHONEN; // TODO esto deberia ser userInput 
+    private NetworkType network_type = NetworkType.KOHONEN;
 
-    private int[,] kohonen_activations = { { 1, 2 }, { 3, 5 }, { 1, 6 } }; // TODO esto deberia ser userInput 
-     
+    private int[,] kohonen_activations = { { 1, 2,4 }, { 3, 5,5 }, { 1, 6, 6 } }; // TODO esto deberia ser userInput 
+    private int kohonen_input_dimension = 10;  // TODO esto deberia ser userInput 
+
     public TextAsset jsonFile;
         
     void Start() {   
@@ -48,7 +49,7 @@ public class NeuralNetworkController : MonoBehaviour{
                 break; 
 
             case NetworkType.KOHONEN: 
-                BuildKohonen(kohonen_activations);
+                BuildKohonen(kohonen_input_dimension, kohonen_activations);
                 break; 
         }     
 
@@ -118,17 +119,17 @@ public class NeuralNetworkController : MonoBehaviour{
         return json;
     }
     
-    private void BuildKohonen(int[,] activations) { 
+    private void BuildKohonen(int neurons_amount, int[,] activations) { 
         
-        int neurons_amount = 0;
+      
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
 
-        for (int i=0; i < height; i++) {  // TODO tiene que haber mejor forma de sumar todo en C# 
+        /*for (int i=0; i < height; i++) {  
             for (int j=0; j < width; j++) { 
                 neurons_amount += activations[i,j];
             }
-        }
+        }*/
 
         // First Layer
         GameObject layer = createLayer(0);
