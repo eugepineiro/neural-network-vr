@@ -53,7 +53,9 @@ public class NeuralNetworkController : MonoBehaviour{
                
                 BuildKohonen(kohonen_input_dimension, kohonen_activations);
                 break; 
-        }     
+        }
+
+        this.transform.position = new Vector3(0,8,-15);     
 
 
     }
