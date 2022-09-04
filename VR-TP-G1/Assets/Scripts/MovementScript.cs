@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class MovementScript : MonoBehaviour
 {
-    public float movementSpeed = 10;
-    public float rotationSpeed = 100;
+    public float movementSpeed; //10
+    public float rotationSpeed; //100
+    public float scaleSpeed;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,14 @@ public class MovementScript : MonoBehaviour
         if (Input.GetKey(KeyCode.DownArrow))
             transform.Rotate(new Vector3(-rotationSpeed*t,0,0));
 
-        
+        // if (Input.GetKey(KeyCode.Q))
+        //     transform.localScale = Vector3.MoveTowards(transform.localScale, transform.localScale*2,scaleSpeed*t);
+        // if (Input.GetKey(KeyCode.E))
+        //     transform.localScale = Vector3.MoveTowards(transform.localScale, transform.localScale/2,scaleSpeed*t);
+        if (Input.GetKey(KeyCode.Q))
+            transform.localScale /= Mathf.Exp(Mathf.Log(scaleSpeed)*t);
+        if (Input.GetKey(KeyCode.E))
+            transform.localScale *= Mathf.Exp(Mathf.Log(scaleSpeed)*t);
+
     }
 }

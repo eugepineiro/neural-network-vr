@@ -123,6 +123,28 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &81482502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7029948723529949830, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
+  m_PrefabInstance: {fileID: 1638584244}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &81482506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 81482502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38fb5d2c70fc594db4fbad60591dd70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  screenList:
+  - {fileID: 2100000, guid: 1c3a7f0ed39407b478251707315145ff, type: 2}
+  - {fileID: 2100000, guid: ab0b6f33242e34f4294f9451808b1dc2, type: 2}
+  - {fileID: 2100000, guid: 494ba64f8aa6ed44692510a0c7ac5d58, type: 2}
+  screenPeriod: 2
 --- !u!1 &110472369
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,6 +306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 10
   rotationSpeed: 100
+  scaleSpeed: 2
 --- !u!1 &161482005
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,7 +966,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071785104}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1001 &1223746337
+--- !u!1001 &1638584244
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -956,15 +979,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.37
+      value: -3.26
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.7706784
+      value: -0.77067935
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.5
+      value: -3.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -994,6 +1017,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7918335002988649766, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1c3a7f0ed39407b478251707315145ff, type: 2}
     - target: {fileID: 919132149155446097, guid: e816d69aff1e3ad4798d1e4864378a9f, type: 3}
       propertyPath: m_Name
       value: monitor
