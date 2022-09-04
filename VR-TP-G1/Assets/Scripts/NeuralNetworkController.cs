@@ -190,10 +190,11 @@ public class NeuralNetworkController : MonoBehaviour{
 
             generateLabels(neuron, string.Format("(1;{0};{1})", column, neuron_index));
 
-            /*
-            color = GetColor( min_value,  max_value, value, colors)
-            neuron.material.SetColor("_Color", color);
-            */ 
+            int min_value = 1; 
+            int max_value = 6;
+            Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
+            neuron.GetComponent<MeshRenderer>().material.SetColor("_Color", color);
+             
 
         }
     }
