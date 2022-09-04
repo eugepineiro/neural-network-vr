@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace VRTP3 {
@@ -14,7 +15,7 @@ public class NeuralNetworkController : MonoBehaviour{
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private NetworkType network_type = NetworkType.KOHONEN;
+    private NetworkType network_type = NetworkType.MLP;
 
     private int[,] kohonen_activations = { { 1, 2,4 }, { 3, 5,5 }, { 1, 6, 6 } }; // TODO esto deberia ser userInput 
     private int kohonen_input_dimension = 10;  // TODO esto deberia ser userInput 
@@ -49,6 +50,7 @@ public class NeuralNetworkController : MonoBehaviour{
                 break; 
 
             case NetworkType.KOHONEN: 
+               
                 BuildKohonen(kohonen_input_dimension, kohonen_activations);
                 break; 
         }     
@@ -84,6 +86,9 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
             neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (network[layer_index]-1)/2.0f, 0);
+
+            generateLabels(neuron,  string.Format("({0};{1})", layer_index, neuron_index));
+
         }
         return layer;
     }
@@ -118,18 +123,30 @@ public class NeuralNetworkController : MonoBehaviour{
         JsonData json = JsonUtility.FromJson<JsonData>(jsonFile.text);
         return json;
     }
+
+    private void generateLabels(GameObject neuron, string text){ 
+         
+            GameObject label = new GameObject();
+             
+            label.transform.parent = neuron.transform;
+            label.name = "Label";
+
+            //Create TextMesh and modify its properties
+            TextMesh textMesh = label.AddComponent<TextMesh>();
+            textMesh.text = text;
+            textMesh.characterSize = 0.1F;
+
+            //Set postion of the TextMesh same as Neuron
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.transform.position = new Vector3(neuron.transform.position.x, neuron.transform.position.y, neuron.transform.position.z);
+    }
     
     private void BuildKohonen(int neurons_amount, int[,] activations) { 
         
       
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
-
-        /*for (int i=0; i < height; i++) {  
-            for (int j=0; j < width; j++) { 
-                neurons_amount += activations[i,j];
-            }
-        }*/
 
         // First Layer
         GameObject layer = createLayer(0);
@@ -149,20 +166,55 @@ public class NeuralNetworkController : MonoBehaviour{
         GameObject top_neurons = new GameObject(string.Format("Layer 1"));
         top_neurons.transform.parent = last_layer.transform;
         for (int i = 0; i < width; i++)
-            generateKohonenTopLayerColumn(top_neurons, height, i, width);
+            generateKohonenTopLayerColumn(top_neurons, height, i, width, kohonen_activations);
+        
         addConnections(0, 1);
+
     }
 
-    private void generateKohonenTopLayerColumn(GameObject layer, int rows_amount, int column, int width)
-    {
+    private void generateKohonenTopLayerColumn(GameObject layer, int rows_amount, int column, int width,  int[,] kohonen_activations)
+    {   
+        Color[] activation_colors = GetColors();
+
         for(int neuron_index = 0; neuron_index < rows_amount; neuron_index++) {  
+
             GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
             neuron.name = string.Format("Neuron {0}", neuron_index+column* rows_amount);
             neuron.transform.parent = layer.transform; 
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
             neuron.transform.localPosition = new Vector3(5, neuron_index - (rows_amount - 1)/2.0f, column - (width - 1) / 2.0f);
+
+            generateLabels(neuron, string.Format("(1;{0};{1})", column, neuron_index));
+
+            /*
+            color = GetColor( min_value,  max_value, value, colors)
+            neuron.material.SetColor("_Color", color);
+            */ 
+
         }
+    }
+
+    private Color[] GetColors() { 
+
+        Color[] colors = { 
+            new Color(255, 195, 0, 1.0f), 
+            new Color(255, 87, 51 , 1.0f),
+            new Color(199, 0, 57, 1.0f),
+            new Color(144, 12, 63, 1.0f),
+            new Color(88, 24, 69, 1.0f),
+            new Color(0, 0, 0, 1.0f)
+        };
+
+        return colors;
+        
+    }
+
+    private Color GetColor(int min_value, int max_value, int value, Color[] colors) {  
+        int step = max_value / colors.Count();
+        int delta = (int) Mathf.Floor((max_value - min_value) / step);
+        return colors[delta];
     }
 }
 }

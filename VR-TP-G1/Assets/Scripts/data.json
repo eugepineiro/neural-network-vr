@@ -1,5 +1,5 @@
 {
-    "nn_type": "mlp",
+    "nn_type": "KOHONEN",
     "layers": [5, 10, 15, 10, 3, 7],
     "is_trained": true
 }
