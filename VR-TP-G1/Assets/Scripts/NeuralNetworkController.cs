@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace VRTP3 {
@@ -210,10 +211,10 @@ public class NeuralNetworkController : MonoBehaviour{
         
     }
 
-    private void GetColor(int min_value, int max_value, int value, Color[] colors) { 
-        // TODO discretizar  
-        //int delta = Mathf.Floor((max_value - min_value) / colors.GetLength()); 
-            
+    private Color GetColor(int min_value, int max_value, int value, Color[] colors) {  
+        int step = max_value / colors.Count();
+        int delta = (int) Mathf.Floor((max_value - min_value) / step);
+        return colors[delta];
     }
 }
 }
