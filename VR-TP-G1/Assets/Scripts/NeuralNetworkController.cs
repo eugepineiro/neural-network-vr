@@ -210,7 +210,7 @@ public class NeuralNetworkController : MonoBehaviour{
         
     }
 
-    private Color GetColor(int min_value, int max_value, int value, Color[] colors) { 
+    private void GetColor(int min_value, int max_value, int value, Color[] colors) { 
         // TODO discretizar  
         //int delta = Mathf.Floor((max_value - min_value) / colors.GetLength()); 
             
