@@ -23,6 +23,7 @@ public class NeuralNetworkController : MonoBehaviour{
     public TextAsset jsonFile;
         
     void Start() {   
+
         JsonData j = LoadJsonData();
         if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
             network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
@@ -55,7 +56,8 @@ public class NeuralNetworkController : MonoBehaviour{
                 break; 
         }
 
-        this.transform.position = new Vector3(0,8,-15);     
+        
+        this.transform.localPosition = new Vector3(2,3,-6);
 
 
     }

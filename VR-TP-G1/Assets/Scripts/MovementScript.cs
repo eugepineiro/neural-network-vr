@@ -18,22 +18,22 @@ public class MovementScript : MonoBehaviour
     {
         float t = Time.deltaTime;
         if (Input.GetKey(KeyCode.A))
-            Debug.Log("A");
-            transform.Translate(new Vector3(-movementSpeed*t,0,0),Space.World);
+            //Debug.Log("A");
+            transform.Translate(new Vector3(-movementSpeed*t,0,0));
         if (Input.GetKey(KeyCode.D))
-            Debug.Log("D");
-            transform.Translate(new Vector3(movementSpeed*t,0,0),Space.World);
+            //Debug.Log("D");
+            transform.Translate(new Vector3(movementSpeed*t,0,0));
         if (Input.GetKey(KeyCode.W))
-            Debug.Log("W");
-            transform.Translate(new Vector3(0,movementSpeed*t,0),Space.World);
+            //Debug.Log("W");
+            transform.Translate(new Vector3(0,movementSpeed*t,0));
         if (Input.GetKey(KeyCode.S))
-            Debug.Log("S");
-            transform.Translate(new Vector3(0,-movementSpeed*t,0),Space.World);
+            //Debug.Log("S");
+            transform.Translate(new Vector3(0,-movementSpeed*t,0));
 
         if (Input.GetKey(KeyCode.LeftArrow))
-            transform.Rotate(new Vector3(0,rotationSpeed*t,0),Space.World);
+            transform.Rotate(new Vector3(0,rotationSpeed*t,0));
         if (Input.GetKey(KeyCode.RightArrow))
-            transform.Rotate(new Vector3(0,-rotationSpeed*t,0),Space.World);
+            transform.Rotate(new Vector3(0,-rotationSpeed*t,0));
         if (Input.GetKey(KeyCode.UpArrow))
             transform.Rotate(new Vector3(rotationSpeed*t,0,0));
         if (Input.GetKey(KeyCode.DownArrow))
