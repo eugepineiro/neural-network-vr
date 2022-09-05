@@ -12,12 +12,13 @@ public class NeuralNetworkController : MonoBehaviour{
     public List<int> network = new List<int>();
     public Material connectionMaterial;
     public Material neuronMaterial;
+	public GameObject selfConnection;
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
     private NetworkType network_type = NetworkType.MLP;
 
-    private int[,] kohonen_activations = { { 1, 2,4 }, { 3, 5,5 }, { 1, 6, 6 } }; // TODO esto deberia ser userInput 
+    private int[,] kohonen_activations = { { 1, 2,4 }, { 3, 5,5 }, {1, 6, 2} }; // TODO esto deberia ser userInput 
     private int kohonen_input_dimension = 10;  // TODO esto deberia ser userInput 
 
     public TextAsset jsonFile;
@@ -90,9 +91,7 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
             neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (network[layer_index]-1)/2.0f, 0);
-
             generateLabels(neuron,  string.Format("({0};{1})", layer_index, neuron_index));
-
         }
         return layer;
     }
@@ -116,7 +115,7 @@ public class NeuralNetworkController : MonoBehaviour{
                     connection.GetComponent<MeshRenderer>().material = connectionMaterial;
                     connection.name = string.Format("Connection {0}.{1}-{2}.{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
                     connection.transform.parent = connections.transform;
-                    connection.transform.localScale = new Vector3(0.01F, Vector3.Distance(p1, p2)/2, 0.01F);
+                    connection.transform.localScale = new Vector3(0.02F, Vector3.Distance(p1, p2)/2, 0.02F);
                     connection.transform.position = (p2 + p1) / 2.0F;
                     connection.transform.up = p2-p1;
                 } 
@@ -158,37 +157,32 @@ public class NeuralNetworkController : MonoBehaviour{
         // Outside-facing plane
         GameObject last_layer = new GameObject(string.Format("Last Layer"));
         last_layer.transform.parent = transform;
-        
         GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Cube);
         plane.transform.parent = last_layer.transform;
         plane.transform.localScale = new Vector3(height, 0.001f, width);
         plane.transform.localPosition = new Vector3(5, 0, 0);
         plane.transform.localRotation = Quaternion.Euler(0, 0, 90);
 
-
         // Final Neurons
         GameObject top_neurons = new GameObject(string.Format("Layer 1"));
         top_neurons.transform.parent = last_layer.transform;
         for (int i = 0; i < width; i++)
             generateKohonenTopLayerColumn(top_neurons, height, i, width, kohonen_activations);
-        
+		addKohonenConnections(top_neurons, width, height);
         addConnections(0, 1);
-
     }
 
-    private void generateKohonenTopLayerColumn(GameObject layer, int rows_amount, int column, int width,  int[,] kohonen_activations)
+    private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations)
     {   
         Color[] activation_colors = GetColors();
-
-        for(int neuron_index = 0; neuron_index < rows_amount; neuron_index++) {  
-
+        for(int neuron_index = 0; neuron_index < height; neuron_index++)
+		{
             GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-
-            neuron.name = string.Format("Neuron {0}", neuron_index+column* rows_amount);
+            neuron.name = string.Format("Neuron {0}", neuron_index+column* height);
             neuron.transform.parent = layer.transform; 
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
-            neuron.transform.localPosition = new Vector3(5, neuron_index - (rows_amount - 1)/2.0f, column - (width - 1) / 2.0f);
+            neuron.transform.localPosition = new Vector3(5, neuron_index - (height - 1)/2.0f, column - (width - 1) / 2.0f);
 
             generateLabels(neuron, string.Format("(1;{0};{1})", column, neuron_index));
 
@@ -196,12 +190,50 @@ public class NeuralNetworkController : MonoBehaviour{
             int max_value = 6;
             Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
             neuron.GetComponent<MeshRenderer>().material.SetColor("_Color", color);
-             
-
         }
     }
 
-    private Color[] GetColors() { 
+	private void addKohonenConnections(GameObject layer, int width, int height){
+		GameObject connections = new GameObject(string.Format("Connections K"));
+		for (int col = 0; col < height; col++)
+			for (int row = 0; row < width; row++)
+				addKohonenConnection(row, col, width, height, layer, connections);
+	}
+
+
+	private void addKohonenConnection(int row, int col, int width, int height, GameObject layer, GameObject connections) {
+		int indexA = row + col*height;
+		GameObject neuronA = layer.transform.Find("Neuron " + indexA).gameObject;
+		connections.transform.parent = transform;
+
+		Vector3 loop_position = neuronA.transform.localPosition + new Vector3(0.1f, 0, 0);
+		GameObject loop = Instantiate(selfConnection, loop_position, Quaternion.identity);
+		loop.transform.parent = connections.transform;
+		loop.name = string.Format("Connection K{0}", indexA);
+
+		for (int dc = -1; dc <= 1; dc++)
+		{
+			for (int dr = -1; dr <= 0; dr++)
+			{
+				int indexB = (row+dr) + (col+dc)*width;
+				if (indexA!=indexB && (row + dr)>=0 && indexB >= 0 && indexB < layer.transform.childCount && (dr!=0 || dc<=0)){
+					GameObject neuronB = layer.transform.Find("Neuron " + indexB).gameObject;
+					GameObject connection = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+					Vector3 p1 = neuronA.transform.position;
+					Vector3 p2 = neuronB.transform.position;
+
+					connection.GetComponent<MeshRenderer>().material = connectionMaterial;
+					connection.name = string.Format("Connection K{0}-K{1}", indexA, indexB);
+					connection.transform.parent = connections.transform;
+					connection.transform.localScale = new Vector3(0.02F, Vector3.Distance(p1, p2) / 2, 0.02F);
+					connection.transform.position = (p2 + p1) / 2.0F;
+					connection.transform.up = p2 - p1;
+				}
+			}
+		}
+	}
+
+	private Color[] GetColors() { 
 
         Color[] colors = { 
             new Color(255, 195, 0, 1.0f), 
