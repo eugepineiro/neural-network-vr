@@ -35,48 +35,39 @@ public class NeuralNetworkController : MonoBehaviour{
 
         switch (network_type) {
 
-            case NetworkType.MLP: 
-                BuildMLP(network);
+            case NetworkType.MLP:
+				Debug.Log("MLP");
+				this.transform.position = BuildMLP(network);
                 break; 
             
             case NetworkType.AUTOENCODER: 
                 Debug.Log("AUTOENCODER");
-                
                 List<int> autoencoder = new List<int>();
                 autoencoder.AddRange(network);
                 network.RemoveAt(network.Count - 1); // latent space is not replicated
                 network.Reverse();                   // mirror network
                 autoencoder.AddRange(network);
-
-                BuildMLP(autoencoder);
+				this.transform.localPosition = BuildMLP(autoencoder);
                 break; 
 
-            case NetworkType.KOHONEN: 
-               
-                BuildKohonen(kohonen_input_dimension, kohonen_activations);
+            case NetworkType.KOHONEN:
+				this.transform.position = BuildKohonen(kohonen_input_dimension, kohonen_activations);
                 break; 
         }
-
-        
-        this.transform.localPosition = new Vector3(2,3,-6);
-
-
-    }
-
-        
-    void Update()
-    {
-        
     }
     
-    private void BuildMLP(List<int> network)
+    private Vector3 BuildMLP(List<int> network)
     {
         int layers_amount = network.Count;
+		int tallestLayer = 0;
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
             GameObject layer = createLayer(layer_index);
-        }
+			if (layer.transform.childCount > tallestLayer)
+				tallestLayer = layer.transform.childCount;
+		}
         for(int l=0; l < layers_amount-1; l++)
             addConnections(l, l+1);
+		return new Vector3(-layers_amount/2.0f, tallestLayer/2.0f, 0);
     }
 
     private GameObject createLayer(int layer_index)
@@ -145,9 +136,7 @@ public class NeuralNetworkController : MonoBehaviour{
             textMesh.transform.position = new Vector3(neuron.transform.position.x, neuron.transform.position.y, neuron.transform.position.z);
     }
     
-    private void BuildKohonen(int neurons_amount, int[,] activations) { 
-        
-      
+    private Vector3 BuildKohonen(int neurons_amount, int[,] activations) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
 
@@ -170,7 +159,8 @@ public class NeuralNetworkController : MonoBehaviour{
             generateKohonenTopLayerColumn(top_neurons, height, i, width, kohonen_activations);
 		addKohonenConnections(top_neurons, width, height);
         addConnections(0, 1);
-    }
+		return new Vector3(0, height, -6);
+	}
 
     private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations)
     {   
