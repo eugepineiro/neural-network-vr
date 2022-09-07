@@ -238,11 +238,7 @@ public class NeuralNetworkController : MonoBehaviour{
         // Final Neurons
         GameObject top_neurons = new GameObject(string.Format("Layer 1"));
         top_neurons.transform.parent = last_layer.transform;
-
-        /*GameObject grid_labels = new GameObject();
-        labels.transform.parent = transform;
-        labels.name = "Labels";
-        labels.tag = "Labels";*/
+ 
         for (int i = 0; i < width; i++)
             generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels);
 
@@ -300,8 +296,9 @@ public class NeuralNetworkController : MonoBehaviour{
             
             generateLabels(labels, neuron, string.Format("(1;{0};{1})", column, neuron_index));
 
-            int min_value = 10;  //TODO
-            int max_value = 400;
+            int min_value = getMinValue(kohonen_activations);  //TODO
+            int max_value = getMaxValue(kohonen_activations);
+            Debug.Log(string.Format("MIN {0} MAX {1}", min_value, max_value));
             /*Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
             neuron.GetComponent<Renderer>().material.SetColor("_Color", new Color(200, 30, 150, 1.0f));*/ 
             neuron.GetComponent<MeshRenderer>().material = GetMaterial(min_value,max_value, kohonen_activations[column, neuron_index]);
@@ -408,6 +405,38 @@ public class NeuralNetworkController : MonoBehaviour{
         }
         return result;
     }
+
+    private int getMinValue(int[,] matrix) { 
+
+        int height = matrix.GetLength(0);
+        int width =matrix.GetLength(1);
+
+        int min = matrix[0,0];
+        for (int i =0; i < width; i++) { 
+            for (int j=0; j < height; j++) { 
+                if (matrix[i,j] < min) 
+                    min = matrix[i,j];
+            }
+        }
+
+        return min;
+    } 
+
+    private int getMaxValue(int[,] matrix) { 
+        
+        int height = matrix.GetLength(0);
+        int width = matrix.GetLength(1);
+
+        int max = 0;
+        for (int i =0; i < width; i++) { 
+            for (int j=0; j < height; j++) { 
+                if (matrix[i,j] > max) 
+                    max = matrix[i,j];
+            }
+        }
+
+        return max;
+    } 
     
 }
 }
