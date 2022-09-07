@@ -61,9 +61,11 @@ public class NeuralNetworkController : MonoBehaviour{
                 if (j.kohonen != null) {
                     int[,] kohonen_activations; 
                     int dimension = j.kohonen.grid_dimension;
+                    bool has_activations; 
+
                     if (j.kohonen.activations != null) {
                         kohonen_activations = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
-                    
+                        has_activations = true;
                     } else { 
                         kohonen_activations = new int[dimension, dimension]; 
                         for (int i =0; i < dimension; i++) { 
@@ -71,8 +73,9 @@ public class NeuralNetworkController : MonoBehaviour{
                                 kohonen_activations[i,k] = 1;
                             }
                         }
+                        has_activations = false;
                     }
-                    BuildKohonen(kohonen_activations, j.kohonen.input_dimension);
+                    BuildKohonen(kohonen_activations, j.kohonen.input_dimension, has_activations);
                     
                 } else {
                     Debug.Log("Faltan parametros para Kohonen");
@@ -215,7 +218,7 @@ public class NeuralNetworkController : MonoBehaviour{
             
     }
     
-    private void BuildKohonen(int[,] activations, int input_dimension) { 
+    private void BuildKohonen(int[,] activations, int input_dimension, bool has_activations) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
         GameObject labels = new GameObject();
@@ -240,7 +243,7 @@ public class NeuralNetworkController : MonoBehaviour{
         top_neurons.transform.parent = last_layer.transform;
  
         for (int i = 0; i < width; i++)
-            generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels);
+            generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels, has_activations);
 
 		addKohonenConnections(top_neurons, width, height);
         addConnections(0, 1);
@@ -261,7 +264,7 @@ public class NeuralNetworkController : MonoBehaviour{
         PivotTo(new Vector3(0, 0, 0));
      }
 
-    private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations, GameObject labels)
+    private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations, GameObject labels, bool has_activations)
     {   
         Color[] activation_colors = GetColors();
         
@@ -288,20 +291,23 @@ public class NeuralNetworkController : MonoBehaviour{
                 neuron.name = string.Format("Neuron {0}", neuron_index+column* height);
 
             }
-            
-            
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);  
-            
-            
-            
-            generateLabels(labels, neuron, string.Format("(1;{0};{1})", column, neuron_index));
 
-            int min_value = getMinValue(kohonen_activations);  //TODO
-            int max_value = getMaxValue(kohonen_activations);
-            Debug.Log(string.Format("MIN {0} MAX {1}", min_value, max_value));
-            /*Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
-            neuron.GetComponent<Renderer>().material.SetColor("_Color", new Color(200, 30, 150, 1.0f));*/ 
-            neuron.GetComponent<MeshRenderer>().material = GetMaterial(min_value,max_value, kohonen_activations[column, neuron_index]);
+            string label_txt;
+            if (has_activations) { 
+                label_txt = string.Format("{0}", kohonen_activations[column, neuron_index]);
+                int min_value = getMinValue(kohonen_activations); 
+                int max_value = getMaxValue(kohonen_activations); 
+
+                /*Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
+                neuron.GetComponent<Renderer>().material.SetColor("_Color", new Color(200, 30, 150, 1.0f));*/ 
+                neuron.GetComponent<MeshRenderer>().material = GetMaterial(min_value,max_value, kohonen_activations[column, neuron_index]);
+            } else { 
+                label_txt = string.Format("(1;{0};{1})", column, neuron_index);
+            }
+            generateLabels(labels, neuron, label_txt);
+
+            
         }
     }
 
