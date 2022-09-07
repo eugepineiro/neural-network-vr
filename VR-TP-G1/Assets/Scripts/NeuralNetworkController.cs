@@ -195,6 +195,8 @@ public class NeuralNetworkController : MonoBehaviour{
             textMesh.text = text;
             textMesh.characterSize = 0.1F;
             textMesh.color = new Color(0,0,0,1);
+            if(low_cost) 
+                textMesh.offsetZ = -0.3F;
 
             //Set postion of the TextMesh same as Neuron
             textMesh.anchor = TextAnchor.MiddleCenter;
@@ -225,7 +227,8 @@ public class NeuralNetworkController : MonoBehaviour{
         top_neurons.transform.parent = last_layer.transform;
         GameObject labels = new GameObject();
         labels.transform.parent = transform;
-        labels.name = "Grid Labels";
+        labels.name = "Labels";
+        labels.tag = "Labels";
         for (int i = 0; i < width; i++)
             generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels);
 
