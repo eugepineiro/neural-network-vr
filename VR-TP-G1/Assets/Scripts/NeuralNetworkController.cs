@@ -59,10 +59,20 @@ public class NeuralNetworkController : MonoBehaviour{
 
             case NetworkType.KOHONEN:
                 if (j.kohonen != null) {
+                    int[,] kohonen_activations; 
+                    int dimension = j.kohonen.grid_dimension;
                     if (j.kohonen.activations != null) {
-                        int[,] kohonen_activations = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
-                        BuildKohonen(kohonen_activations, j.kohonen.input_dimension);
+                        kohonen_activations = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
+                    
+                    } else { 
+                        kohonen_activations = new int[dimension, dimension]; 
+                        for (int i =0; i < dimension; i++) { 
+                            for (int k=0; k< dimension; k++) { 
+                                kohonen_activations[i,k] = 1;
+                            }
+                        }
                     }
+                    BuildKohonen(kohonen_activations, j.kohonen.input_dimension);
                     
                 } else {
                     Debug.Log("Faltan parametros para Kohonen");
@@ -113,7 +123,7 @@ public class NeuralNetworkController : MonoBehaviour{
 
     private GameObject createLayer(int layer_index, int neurons_amount, GameObject labels)
     {
-        Debug.Log(layer_index);
+        
         GameObject layer = new GameObject(string.Format("Layer {0}", layer_index));
         layer.transform.parent = transform;
 
@@ -167,7 +177,6 @@ public class NeuralNetworkController : MonoBehaviour{
                     GameObject neuronB = layer2.transform.Find("Neuron " + second_neuron_index).gameObject;
                     Vector3 p1 = neuronA.transform.position;
                     Vector3 p2 = neuronB.transform.position;
-                    Debug.Log(string.Format("P1: {0} P2 {1}", p1, p2));
 
                     connection.GetComponent<MeshRenderer>().material = connectionMaterial;
                     connection.name = string.Format("Connection {0}.{1}-{2}.{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
