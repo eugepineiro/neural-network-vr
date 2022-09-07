@@ -12,6 +12,7 @@ public class NeuralNetworkController : MonoBehaviour{
     public List<int> network = new List<int>();
     public Material connectionMaterial;
     public Material neuronMaterial;
+    public Material planeMaterial;
 	public GameObject selfConnection;
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
@@ -172,6 +173,7 @@ public class NeuralNetworkController : MonoBehaviour{
         plane.transform.localScale = new Vector3(height, 0.001f, width);
         plane.transform.localPosition = new Vector3(5, 0, 0);
         plane.transform.localRotation = Quaternion.Euler(0, 0, 90);
+        plane.GetComponent<MeshRenderer>().material = planeMaterial;
 
         // Final Neurons
         GameObject top_neurons = new GameObject(string.Format("Layer 1"));
