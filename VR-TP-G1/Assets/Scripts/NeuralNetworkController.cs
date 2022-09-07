@@ -12,6 +12,7 @@ public class NeuralNetworkController : MonoBehaviour{
     public List<int> network = new List<int>();
     public Material connectionMaterial;
     public Material neuronMaterial;
+    public Material quadMaterial;
     public Material planeMaterial;
     public Material pinkMaterial;
     public Material purpleMaterial;
@@ -25,6 +26,8 @@ public class NeuralNetworkController : MonoBehaviour{
     private NetworkType network_type = NetworkType.MLP;
  
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
+
+    private bool low_cost = true;
         
     void Start() {   
 
@@ -112,13 +115,20 @@ public class NeuralNetworkController : MonoBehaviour{
         GameObject labels = new GameObject();
         labels.transform.parent = transform;
         labels.name = "Labels";
-        for (int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) // TODO network[layer_index] es param
-        {
-            GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        for (int neuron_index = 0; neuron_index < neurons_amount; neuron_index++)  
+        {   
+            GameObject neuron;
+            if (low_cost) { 
+                neuron = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                neuron.GetComponent<MeshRenderer>().material = quadMaterial;
+            } else {
+                neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+
+            }
             neuron.name = string.Format("Neuron {0}", neuron_index);
             neuron.transform.parent = layer.transform;
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
-            neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
             neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (neurons_amount-1)/2.0f, 0);
 
             generateLabels(labels, neuron,  string.Format("({0};{1})", layer_index, neuron_index));
@@ -225,14 +235,21 @@ public class NeuralNetworkController : MonoBehaviour{
     private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations, GameObject labels)
     {   
         Color[] activation_colors = GetColors();
-       
+        
         for(int neuron_index = 0; neuron_index < height; neuron_index++)
-		{
-            GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		{   
+            GameObject neuron;
+            if (low_cost) { 
+                neuron = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                neuron.GetComponent<MeshRenderer>().material = quadMaterial;
+            } else {
+                neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+
+            }
             neuron.name = string.Format("Neuron {0}", neuron_index+column* height);
             neuron.transform.parent = layer.transform; 
-            neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F); 
-            neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+            neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);  
             neuron.transform.localPosition = new Vector3(5, neuron_index - (height - 1)/2.0f, column - (width - 1) / 2.0f);
             
             

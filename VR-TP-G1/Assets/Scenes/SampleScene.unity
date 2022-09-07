@@ -260,7 +260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &110867813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,6 +276,7 @@ MonoBehaviour:
   network: 
   connectionMaterial: {fileID: 2100000, guid: f39764cd8bb97e947ac8b9d9838c18d3, type: 2}
   neuronMaterial: {fileID: 2100000, guid: 2fb5de7e8d3ad3cd9b9455625b67cf59, type: 2}
+  quadMaterial: {fileID: 2100000, guid: 0b847161e90c5250f9920dc938e45725, type: 2}
   planeMaterial: {fileID: 2100000, guid: 38bdb1dd5ca64b7e4808514a82ea5461, type: 2}
   pinkMaterial: {fileID: 2100000, guid: 89843fcef61708103baf34ad3c377e21, type: 2}
   purpleMaterial: {fileID: 2100000, guid: 65a6488d6c7301d5eb08f0d73bf95b5d, type: 2}
