@@ -13,6 +13,10 @@ public class NeuralNetworkController : MonoBehaviour{
     public Material connectionMaterial;
     public Material neuronMaterial;
     public Material planeMaterial;
+    public Material pinkMaterial;
+    public Material purpleMaterial;
+    public Material greenMaterial;
+    public Material blueMaterial;
 	public GameObject selfConnection;
     public TextAsset jsonFile;
 
@@ -234,10 +238,11 @@ public class NeuralNetworkController : MonoBehaviour{
             
             generateLabels(labels, neuron, string.Format("(1;{0};{1})", column, neuron_index));
 
-            int min_value = 1;  //TODO
-            int max_value = 12;
-            Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
-            neuron.GetComponent<MeshRenderer>().material.SetColor("_Color", color);
+            int min_value = 10;  //TODO
+            int max_value = 400;
+            /*Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
+            neuron.GetComponent<Renderer>().material.SetColor("_Color", new Color(200, 30, 150, 1.0f));*/ 
+            neuron.GetComponent<MeshRenderer>().material = GetMaterial(min_value,max_value, kohonen_activations[column, neuron_index]);
         }
     }
 
@@ -300,6 +305,15 @@ public class NeuralNetworkController : MonoBehaviour{
         int step = max_value / colors.Count();
         int delta = (int) Mathf.Floor((max_value - min_value) / step);
         return colors[delta];
+    }
+
+    private Material GetMaterial(int min_value, int max_value, int value) {
+        Material[] materials = {pinkMaterial, purpleMaterial, blueMaterial, greenMaterial};  
+
+        int step = max_value / materials.Count();
+        int delta = (int) Mathf.Floor((max_value - value) / step);
+         
+        return materials[delta];
     }
 
     private int[,] activationsParser(string activations, int dimension) {
