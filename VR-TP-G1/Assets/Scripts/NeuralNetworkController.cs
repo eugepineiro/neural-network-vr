@@ -15,11 +15,10 @@ public class NeuralNetworkController : MonoBehaviour{
 	public GameObject selfConnection;
 
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
-
+    public const float MAX_RADIUS = 2;
     private NetworkType network_type = NetworkType.MLP;
 
     private int[,] kohonen_activations = { { 1, 2,4 }, { 3, 5,5 }, {1, 6, 2} }; // TODO esto deberia ser userInput 
-    private int kohonen_input_dimension = 10;  // TODO esto deberia ser userInput 
 
     public TextAsset jsonFile;
         
@@ -37,7 +36,7 @@ public class NeuralNetworkController : MonoBehaviour{
 
             case NetworkType.MLP:
 				Debug.Log("MLP");
-				this.transform.position = BuildMLP(network);
+				BuildMLP(network);
                 break; 
             
             case NetworkType.AUTOENCODER: 
@@ -47,16 +46,16 @@ public class NeuralNetworkController : MonoBehaviour{
                 network.RemoveAt(network.Count - 1); // latent space is not replicated
                 network.Reverse();                   // mirror network
                 autoencoder.AddRange(network);
-				this.transform.localPosition = BuildMLP(autoencoder);
+				BuildMLP(autoencoder);
                 break; 
 
             case NetworkType.KOHONEN:
-				this.transform.position = BuildKohonen(kohonen_input_dimension, kohonen_activations);
+				BuildKohonen(kohonen_activations);
                 break; 
         }
     }
     
-    private Vector3 BuildMLP(List<int> network)
+    private void BuildMLP(List<int> network)
     {
         int layers_amount = network.Count;
 		int tallestLayer = 0;
@@ -67,7 +66,29 @@ public class NeuralNetworkController : MonoBehaviour{
 		}
         for(int l=0; l < layers_amount-1; l++)
             addConnections(l, l+1);
-		return new Vector3(-layers_amount/2.0f, tallestLayer/2.0f, 0);
+        float height = network.Max();
+        float width = layers_amount-1;
+        float s = 1;
+        if (width >= height && width > MAX_RADIUS)
+        {
+            s = 2*(MAX_RADIUS / width);
+            this.transform.localScale = new Vector3(s, s, s);
+        }
+        else if(height >= width && height > MAX_RADIUS)
+        {
+            s = 2*(MAX_RADIUS / height);
+            this.transform.localScale = new Vector3(s,s,s);
+        }
+        this.transform.position = new Vector3(-s*(width/2.0f), 0, 0); // Si quiero que quede apoyado, y=(tallestLayer/2.0f)
+        PivotTo(new Vector3(0,0,0));
+    }
+
+    public void PivotTo(Vector3 position)
+    {
+        Vector3 offset = transform.position - position;
+        foreach (Transform child in transform)
+            child.transform.position += offset;
+        transform.position = position;
     }
 
     private GameObject createLayer(int layer_index)
@@ -136,7 +157,7 @@ public class NeuralNetworkController : MonoBehaviour{
             textMesh.transform.position = new Vector3(neuron.transform.position.x, neuron.transform.position.y, neuron.transform.position.z);
     }
     
-    private Vector3 BuildKohonen(int neurons_amount, int[,] activations) { 
+    private void BuildKohonen(int[,] activations) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
 
@@ -159,8 +180,22 @@ public class NeuralNetworkController : MonoBehaviour{
             generateKohonenTopLayerColumn(top_neurons, height, i, width, kohonen_activations);
 		addKohonenConnections(top_neurons, width, height);
         addConnections(0, 1);
-		return new Vector3(0, height, -6);
-	}
+        float network_h = Mathf.Max(network[0], height);
+        float network_w = 5;
+        float s = 1;
+        if (network_w >= network_h && network_w > MAX_RADIUS)
+        {
+            s = 2 * (MAX_RADIUS / network_w);
+            this.transform.localScale = new Vector3(s, s, s);
+        }
+        else if (network_h >= network_w && network_h > MAX_RADIUS)
+        {
+            s = 2 * (MAX_RADIUS / network_h);
+            this.transform.localScale = new Vector3(s, s, s);
+        }
+        this.transform.position = new Vector3(-s*2.5f, 0, 0); // Si quiero que quede apoyado, y=(tallestLayer/2.0f)
+        PivotTo(new Vector3(0, 0, 0));
+     }
 
     private void generateKohonenTopLayerColumn(GameObject layer, int height, int column, int width,  int[,] kohonen_activations)
     {   
