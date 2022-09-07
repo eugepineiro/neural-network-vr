@@ -24,7 +24,7 @@ public class NeuralNetworkController : MonoBehaviour{
         
     void Start() {   
 
-        JsonData j = LoadJsonData();
+        JsonData j = JsonUtility.FromJson<JsonData>(jsonFile.text);
         if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
             network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
         }
@@ -50,7 +50,15 @@ public class NeuralNetworkController : MonoBehaviour{
                 break; 
 
             case NetworkType.KOHONEN:
-				BuildKohonen(kohonen_activations);
+                if (j.kohonen != null) {
+                    if (j.kohonen.activations != null) {
+                        int[,] asd = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
+                        // BuildKohonen(activations);
+                    }
+                    BuildKohonen(kohonen_activations);
+                } else {
+                    Debug.Log("Faltan parametros para Kohonen");
+                }
                 break; 
         }
     }
@@ -132,11 +140,6 @@ public class NeuralNetworkController : MonoBehaviour{
                     connection.transform.up = p2-p1;
                 } 
             }    
-    }
-
-    private JsonData LoadJsonData() {
-        JsonData json = JsonUtility.FromJson<JsonData>(jsonFile.text);
-        return json;
     }
 
     private void generateLabels(GameObject neuron, string text){ 
@@ -278,5 +281,37 @@ public class NeuralNetworkController : MonoBehaviour{
         int delta = (int) Mathf.Floor((max_value - min_value) / step);
         return colors[delta];
     }
+
+    private int[,] activationsParser(string activations, int dimension) {
+        int[,] result = new int[dimension,dimension];
+        string num = "";
+        bool isOpen = false;
+        int row = 0;
+        int column = 0;
+        for (int i = 0; i < activations.Length; i++)
+        {
+            if (activations[i] == '[') {
+                isOpen = true;
+                column = 0;
+                num = "";
+            } else if (activations[i] == ']') {
+                if (isOpen) {
+                    if (num != "") {
+                        result[row,column] = int.Parse(num);
+                    }
+                    row++;
+                }
+                isOpen = false;
+            } else if (activations[i] == ',' && isOpen) {
+                result[row,column] = int.Parse(num);
+                column++;
+                num = "";
+            } else if (Char.IsDigit(activations[i])) {
+                num += activations[i];
+            }
+        }
+        return result;
+    }
+    
 }
 }

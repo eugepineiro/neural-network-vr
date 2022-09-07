@@ -8,6 +8,6 @@ namespace VRTP3
     {
         public string nn_type;
         public List<int> layers = new List<int>();
-        public bool is_trained = false;
+        public Kohonen kohonen;
     }
 }
