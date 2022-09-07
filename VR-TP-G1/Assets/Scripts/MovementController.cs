@@ -57,16 +57,21 @@ public class MovementController : MonoBehaviour
             transform.localScale *= Mathf.Exp(Mathf.Log(scaleSpeed)*t);
 
         /* UN/HIDE LABELS L */
-        if (Input.GetKey(KeyCode.L)) {
-            // TODO si apretas la L lo desactiva pero despues si la apretas de nuevo tira nullpointer  
-            GameObject labels = GameObject.Find("Labels");
+        if (Input.GetKeyDown(KeyCode.L)) {
+            // // TODO si apretas la L lo desactiva pero despues si la apretas de nuevo tira nullpointer  
+            // GameObject labels = GameObject.Find("Labels");
            
-            if(/*labels != null &&*/ labels.activeInHierarchy) { 
-                Debug.Log("is active");
-                labels.SetActive(false);
+            // if(/*labels != null &&*/ labels.activeInHierarchy) { 
+            //     Debug.Log("is active");
+            //     labels.SetActive(false);
                 
-            } else {
-                labels.SetActive(true);
+            // } else {
+            //     labels.SetActive(true);
+            // }
+            foreach(GameObject labels in GameObject.FindGameObjectsWithTag("Labels")){
+                foreach (Renderer labelRenderer in labels.GetComponentsInChildren(typeof(Renderer))){
+                    labelRenderer.enabled = ! labelRenderer.enabled;
+                }
             }
         }
 
