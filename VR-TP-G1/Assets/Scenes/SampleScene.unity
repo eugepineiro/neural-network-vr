@@ -280,7 +280,7 @@ MonoBehaviour:
   planeMaterial: {fileID: 2100000, guid: 38bdb1dd5ca64b7e4808514a82ea5461, type: 2}
   pinkMaterial: {fileID: 2100000, guid: 89843fcef61708103baf34ad3c377e21, type: 2}
   purpleMaterial: {fileID: 2100000, guid: 65a6488d6c7301d5eb08f0d73bf95b5d, type: 2}
-  greenMaterial: {fileID: 2100000, guid: 2dd336bc8b9eb227588cf75edcadd5cd, type: 2}
+  orangeMaterial: {fileID: 2100000, guid: 2dd336bc8b9eb227588cf75edcadd5cd, type: 2}
   blueMaterial: {fileID: 2100000, guid: daa06bc98a4ed3a1bbd8cd9a29b2b1a6, type: 2}
   selfConnection: {fileID: 2819540715890332848, guid: e6e7fa245717bb244ae8426675cad687, type: 3}
   jsonFile: {fileID: 4900000, guid: 471dc4ae1ac4260f8a649d24d1039645, type: 3}

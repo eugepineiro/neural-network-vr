@@ -16,7 +16,7 @@ public class NeuralNetworkController : MonoBehaviour{
     public Material planeMaterial;
     public Material pinkMaterial;
     public Material purpleMaterial;
-    public Material greenMaterial;
+    public Material orangeMaterial;
     public Material blueMaterial;
 	public GameObject selfConnection;
     public TextAsset jsonFile;
@@ -160,7 +160,7 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
             
 
-            generateLabels(labels, neuron,  string.Format("({0};{1})", layer_index, neuron_index));
+            generateLabels(labels, neuron,  string.Format("({0};{1})", layer_index, neuron_index), new Color(0,0,0,1));
         }
         return layer;
     }
@@ -196,7 +196,7 @@ public class NeuralNetworkController : MonoBehaviour{
         return json;
     }
 
-    private void generateLabels(GameObject parent, GameObject neuron, string text){ 
+    private void generateLabels(GameObject parent, GameObject neuron, string text, Color color){ 
             
             GameObject label = new GameObject();
          
@@ -207,7 +207,7 @@ public class NeuralNetworkController : MonoBehaviour{
             TextMesh textMesh = label.AddComponent<TextMesh>();
             textMesh.text = text;
             textMesh.characterSize = 0.1F;
-            textMesh.color = new Color(0,0,0,1);
+            textMesh.color = color;
             if(low_cost) 
                 textMesh.offsetZ = -0.3F;
 
@@ -294,6 +294,7 @@ public class NeuralNetworkController : MonoBehaviour{
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);  
 
             string label_txt;
+            Color label_color;
             if (has_activations) { 
                 label_txt = string.Format("{0}", kohonen_activations[column, neuron_index]);
                 int min_value = getMinValue(kohonen_activations); 
@@ -302,10 +303,13 @@ public class NeuralNetworkController : MonoBehaviour{
                 /*Color color = GetColor( min_value,  max_value, kohonen_activations[column, neuron_index], activation_colors);
                 neuron.GetComponent<Renderer>().material.SetColor("_Color", new Color(200, 30, 150, 1.0f));*/ 
                 neuron.GetComponent<MeshRenderer>().material = GetMaterial(min_value,max_value, kohonen_activations[column, neuron_index]);
+                label_color = new Color(255,255,255,1);
             } else { 
                 label_txt = string.Format("(1;{0};{1})", column, neuron_index);
+                label_color = new Color(0,0,0,1);
+                
             }
-            generateLabels(labels, neuron, label_txt);
+            generateLabels(labels, neuron, label_txt, label_color);
 
             
         }
@@ -373,7 +377,7 @@ public class NeuralNetworkController : MonoBehaviour{
     }
 
     private Material GetMaterial(int min_value, int max_value, int value) {
-        Material[] materials = {pinkMaterial, purpleMaterial, blueMaterial, greenMaterial};  
+        Material[] materials = { blueMaterial, purpleMaterial, pinkMaterial, orangeMaterial};  
 
         int step = max_value / materials.Count();
         int delta = (int) Mathf.Floor((max_value - value) / step);
