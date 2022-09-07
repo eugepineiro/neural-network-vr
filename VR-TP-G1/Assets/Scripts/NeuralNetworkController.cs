@@ -115,6 +115,7 @@ public class NeuralNetworkController : MonoBehaviour{
         GameObject labels = new GameObject();
         labels.transform.parent = transform;
         labels.name = "Labels";
+        labels.tag = "Labels";
         for (int neuron_index = 0; neuron_index < neurons_amount; neuron_index++)  
         {   
             GameObject neuron;
