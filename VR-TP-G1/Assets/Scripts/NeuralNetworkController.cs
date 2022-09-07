@@ -19,12 +19,6 @@ public class NeuralNetworkController : MonoBehaviour{
     public const float MAX_RADIUS = 2;
     
     private NetworkType network_type = NetworkType.MLP;
-
-    private int[,] kohonen_activations = { { 1, 2,4,6}, 
-                                            { 3, 5,12,6}, 
-                                            {1, 6, 2,6}, 
-                                            { 1, 2,4,6 }
-                                             }; // TODO esto deberia ser userInput 
  
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
         
@@ -58,10 +52,10 @@ public class NeuralNetworkController : MonoBehaviour{
             case NetworkType.KOHONEN:
                 if (j.kohonen != null) {
                     if (j.kohonen.activations != null) {
-                        int[,] asd = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
-                        // BuildKohonen(activations);
+                        int[,] kohonen_activations = activationsParser(j.kohonen.activations, j.kohonen.grid_dimension);
+                        BuildKohonen(kohonen_activations, j.kohonen.input_dimension);
                     }
-                    BuildKohonen(kohonen_activations);
+                    
                 } else {
                     Debug.Log("Faltan parametros para Kohonen");
                 }
@@ -74,7 +68,7 @@ public class NeuralNetworkController : MonoBehaviour{
         int layers_amount = network.Count;
 		int tallestLayer = 0;
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
-            GameObject layer = createLayer(layer_index);
+            GameObject layer = createLayer(layer_index, network[layer_index]);
 			if (layer.transform.childCount > tallestLayer)
 				tallestLayer = layer.transform.childCount;
 		}
@@ -105,22 +99,23 @@ public class NeuralNetworkController : MonoBehaviour{
         transform.position = position;
     }
 
-    private GameObject createLayer(int layer_index)
+    private GameObject createLayer(int layer_index, int neurons_amount)
     {
+        Debug.Log(layer_index);
         GameObject layer = new GameObject(string.Format("Layer {0}", layer_index));
         layer.transform.parent = transform;
 
         GameObject labels = new GameObject();
         labels.transform.parent = transform;
         labels.name = "Labels";
-        for (int neuron_index = 0; neuron_index < network[layer_index]; neuron_index++)
+        for (int neuron_index = 0; neuron_index < neurons_amount; neuron_index++) // TODO network[layer_index] es param
         {
             GameObject neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             neuron.name = string.Format("Neuron {0}", neuron_index);
             neuron.transform.parent = layer.transform;
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
             neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
-            neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (network[layer_index]-1)/2.0f, 0);
+            neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (neurons_amount-1)/2.0f, 0);
 
             generateLabels(labels, neuron,  string.Format("({0};{1})", layer_index, neuron_index));
         }
@@ -178,12 +173,12 @@ public class NeuralNetworkController : MonoBehaviour{
             
     }
     
-    private void BuildKohonen(int[,] activations) { 
+    private void BuildKohonen(int[,] activations, int input_dimension) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
 
         // First Layer
-        GameObject layer = createLayer(0);
+        GameObject layer = createLayer(0, input_dimension);
 
         // Outside-facing plane
         GameObject last_layer = new GameObject(string.Format("Last Layer"));
@@ -202,7 +197,7 @@ public class NeuralNetworkController : MonoBehaviour{
         labels.transform.parent = transform;
         labels.name = "Grid Labels";
         for (int i = 0; i < width; i++)
-            generateKohonenTopLayerColumn(top_neurons, height, i, width, kohonen_activations,labels);
+            generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels);
 
 		addKohonenConnections(top_neurons, width, height);
         addConnections(0, 1);

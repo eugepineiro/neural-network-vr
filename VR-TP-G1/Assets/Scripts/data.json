@@ -1,6 +1,6 @@
 {
-    "nn_type": "KOHONEN",
-    "layers": [5, 10, 15, 10, 3, 7],
+    "nn_type": "AUTOENCODER",
+    "layers": [500, 100, 150, 100, 30, 70],
     "kohonen": { 
         "input_dimension": 10,
         "grid_dimension": 4, 
