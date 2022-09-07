@@ -28,7 +28,7 @@ public class NeuralNetworkController : MonoBehaviour{
  
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private bool low_cost = true;
+    private bool low_cost = false;
         
     void Start() {   
 
@@ -75,8 +75,12 @@ public class NeuralNetworkController : MonoBehaviour{
     {
         int layers_amount = network.Count;
 		int tallestLayer = 0;
+        GameObject labels = new GameObject();
+        labels.transform.parent = transform;
+        labels.name = "Labels";
+        labels.tag = "Labels";
         for(int layer_index = 0; layer_index < layers_amount; layer_index++){
-            GameObject layer = createLayer(layer_index, network[layer_index]);
+            GameObject layer = createLayer(layer_index, network[layer_index], labels);
 			if (layer.transform.childCount > tallestLayer)
 				tallestLayer = layer.transform.childCount;
 		}
@@ -107,16 +111,13 @@ public class NeuralNetworkController : MonoBehaviour{
         transform.position = position;
     }
 
-    private GameObject createLayer(int layer_index, int neurons_amount)
+    private GameObject createLayer(int layer_index, int neurons_amount, GameObject labels)
     {
         Debug.Log(layer_index);
         GameObject layer = new GameObject(string.Format("Layer {0}", layer_index));
         layer.transform.parent = transform;
 
-        GameObject labels = new GameObject();
-        labels.transform.parent = transform;
-        labels.name = "Labels";
-        labels.tag = "Labels";
+      
         for (int neuron_index = 0; neuron_index < neurons_amount; neuron_index++)  
         {   
             GameObject neuron;
@@ -208,9 +209,12 @@ public class NeuralNetworkController : MonoBehaviour{
     private void BuildKohonen(int[,] activations, int input_dimension) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
-
+        GameObject labels = new GameObject();
+        labels.transform.parent = transform;
+        labels.name = "Labels";
+        labels.tag = "Labels";
         // First Layer
-        GameObject layer = createLayer(0, input_dimension);
+        GameObject layer = createLayer(0, input_dimension, labels);
 
         // Outside-facing plane
         GameObject last_layer = new GameObject(string.Format("Last Layer"));
@@ -225,10 +229,11 @@ public class NeuralNetworkController : MonoBehaviour{
         // Final Neurons
         GameObject top_neurons = new GameObject(string.Format("Layer 1"));
         top_neurons.transform.parent = last_layer.transform;
-        GameObject labels = new GameObject();
+
+        /*GameObject grid_labels = new GameObject();
         labels.transform.parent = transform;
         labels.name = "Labels";
-        labels.tag = "Labels";
+        labels.tag = "Labels";*/
         for (int i = 0; i < width; i++)
             generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels);
 
