@@ -284,6 +284,7 @@ MonoBehaviour:
   blueMaterial: {fileID: 2100000, guid: daa06bc98a4ed3a1bbd8cd9a29b2b1a6, type: 2}
   selfConnection: {fileID: 2819540715890332848, guid: e6e7fa245717bb244ae8426675cad687, type: 3}
   jsonFile: {fileID: 4900000, guid: 471dc4ae1ac4260f8a649d24d1039645, type: 3}
+  target: {fileID: 1700314915}
 --- !u!4 &110867814
 Transform:
   m_ObjectHideFlags: 0

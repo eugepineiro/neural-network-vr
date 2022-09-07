@@ -20,6 +20,7 @@ public class NeuralNetworkController : MonoBehaviour{
     public Material blueMaterial;
 	public GameObject selfConnection;
     public TextAsset jsonFile;
+    public Transform target;
 
     public const float MAX_RADIUS = 2;
     
@@ -120,17 +121,30 @@ public class NeuralNetworkController : MonoBehaviour{
         {   
             GameObject neuron;
             if (low_cost) { 
+                GameObject parentLookAt = new GameObject(); 
+                parentLookAt.transform.parent = layer.transform;
+                parentLookAt.name = string.Format("Neuron {0}", neuron_index);
                 neuron = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 neuron.GetComponent<MeshRenderer>().material = quadMaterial;
+                neuron.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                neuron.transform.parent = parentLookAt.transform; 
+                neuron.name = string.Format("Neuron Child {0}", neuron_index);
+                
+                parentLookAt.transform.localPosition = new Vector3(layer_index, neuron_index - (neurons_amount-1)/2.0f, 0);
+                LookAtController script = parentLookAt.AddComponent<LookAtController>();
+                script.target = target;
+            
             } else {
                 neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
-
+                neuron.transform.parent = layer.transform;
+                neuron.name = string.Format("Neuron {0}", neuron_index);
+                neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (neurons_amount-1)/2.0f, 0);
             }
-            neuron.name = string.Format("Neuron {0}", neuron_index);
-            neuron.transform.parent = layer.transform;
+            
+            
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);
-            neuron.transform.localPosition = new Vector3(layer_index, neuron_index - (neurons_amount-1)/2.0f, 0);
+            
 
             generateLabels(labels, neuron,  string.Format("({0};{1})", layer_index, neuron_index));
         }
@@ -152,6 +166,7 @@ public class NeuralNetworkController : MonoBehaviour{
                     GameObject neuronB = layer2.transform.Find("Neuron " + second_neuron_index).gameObject;
                     Vector3 p1 = neuronA.transform.position;
                     Vector3 p2 = neuronB.transform.position;
+                    Debug.Log(string.Format("P1: {0} P2 {1}", p1, p2));
 
                     connection.GetComponent<MeshRenderer>().material = connectionMaterial;
                     connection.name = string.Format("Connection {0}.{1}-{2}.{3}", first_layer, first_neuron_index, second_layer, second_neuron_index);
@@ -241,17 +256,29 @@ public class NeuralNetworkController : MonoBehaviour{
 		{   
             GameObject neuron;
             if (low_cost) { 
+                GameObject parentLookAt = new GameObject(); 
+                parentLookAt.transform.parent = layer.transform;
                 neuron = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 neuron.GetComponent<MeshRenderer>().material = quadMaterial;
+                //neuron.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                neuron.transform.parent = parentLookAt.transform;
+                
+                parentLookAt.transform.localPosition = new Vector3(5, neuron_index - (height - 1)/2.0f, column - (width - 1) / 2.0f); 
+                parentLookAt.name = string.Format("Neuron {0}", neuron_index+column* height);
+                neuron.name = string.Format("Neuron Child {0}", neuron_index+column* height);
+                
             } else {
                 neuron = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 neuron.GetComponent<MeshRenderer>().material = neuronMaterial;
+                neuron.transform.parent = layer.transform; 
+                neuron.transform.localPosition = new Vector3(5, neuron_index - (height - 1)/2.0f, column - (width - 1) / 2.0f);
+                neuron.name = string.Format("Neuron {0}", neuron_index+column* height);
 
             }
-            neuron.name = string.Format("Neuron {0}", neuron_index+column* height);
-            neuron.transform.parent = layer.transform; 
+            
+            
             neuron.transform.localScale = new Vector3(0.2F, 0.2F, 0.2F);  
-            neuron.transform.localPosition = new Vector3(5, neuron_index - (height - 1)/2.0f, column - (width - 1) / 2.0f);
+            
             
             
             generateLabels(labels, neuron, string.Format("(1;{0};{1})", column, neuron_index));
