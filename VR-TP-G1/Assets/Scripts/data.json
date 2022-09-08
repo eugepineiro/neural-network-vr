@@ -1,5 +1,5 @@
 {
-    "nn_type": "MLP",
+    "nn_type": "KOHONEN",
     "layers": [5, 3, 2],
     "kohonen": { 
         "input_dimension": 10,
@@ -7,5 +7,5 @@
         "activations": "[[100, 200, 300, 150],[100, 200, 30, 40],[100, 200, 300, 150],[50, 400, 30, 10 ]]"
     }, 
     "improve_performance": true,
-    "show_connections": false
+    "show_connections": true
 }
