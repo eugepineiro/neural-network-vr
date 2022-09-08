@@ -1,5 +1,5 @@
 {
-    "nn_type": "KOHONEN",
+    "nn_type": "MLP",
     "layers": [5, 3, 2],
     "kohonen": { 
         "input_dimension": 10,
