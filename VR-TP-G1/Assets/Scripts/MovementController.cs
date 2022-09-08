@@ -10,10 +10,16 @@ public class MovementController : MonoBehaviour
     public float scaleSpeed;
     public bool showLabels = false;
 
+    private Vector3 startingPosition;
+    private Quaternion startingRotation;
+    private Vector3 startingScale;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        startingPosition = transform.position;
+        startingRotation = transform.rotation;
+        startingScale = transform.localScale;
     }
 
     // Update is called once per frame
@@ -55,6 +61,12 @@ public class MovementController : MonoBehaviour
             transform.localScale /= Mathf.Exp(Mathf.Log(scaleSpeed)*t);
         if (Input.GetKey(KeyCode.E))
             transform.localScale *= Mathf.Exp(Mathf.Log(scaleSpeed)*t);
+
+        if (Input.GetKey(KeyCode.R)){
+            transform.position = startingPosition;
+            transform.rotation = startingRotation;
+            transform.localScale = startingScale;
+        }
 
         /* UN/HIDE LABELS L */
         if (Input.GetKeyDown(KeyCode.L)) {
