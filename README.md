@@ -16,6 +16,8 @@ Se recibe un archivo de configuración `data.json` con las características de l
 | ------------- | ------------------------------ | ------------- |
 |"nn_type"     |  Modelo de Red Neuronal  | MLP, KOHONEN, AUTOENCODER |
 |"layers"     |  Array donde el índice representa la capa y el valor la cantidad de neuronas en esa capa  | int array |
+|"improve_performance"   | Incrementar la performance de generación procedural de neuronas | boolean |
+
 
 
 ## Ejemplos 
@@ -26,6 +28,7 @@ Red con 5 neuronas en la capa de entrada y una en la capa de salida.
 {
     "nn_type": "MLP",
     "layers": [5, 1],
+    "improve_performance": false
 }
 ```
 
@@ -35,6 +38,7 @@ Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neu
 {
     "nn_type": "MLP",
     "layers": [10,20,30,40],
+    "improve_performance": false
 }
 ```
 
@@ -44,6 +48,7 @@ Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neu
 {
     "nn_type": "AUTOENCODER",
     "layers": [5,3,2],
+    "improve_performance": false
 }
 ```
 ![Autoencoder](./resources/autoencoder.png)
@@ -65,7 +70,8 @@ Para visualizar una Red de Kohonen es necesario configurar más parámetros:
     "kohonen": { 
         "input_dimension": 10,
         "grid_dimension": 3
-    }
+    },
+    "improve_performance": false
 }
 ```
 ![Kohonen](./resources/kohonen.png)
@@ -83,7 +89,8 @@ Las activaciones se muestran por colores formando un heatmap en la capa de salid
         "input_dimension": 10,
         "grid_dimension": 4, 
         "activations": "[[100, 200, 300, 150],[100, 200, 30, 40],[100, 200, 300, 150],[50, 400, 30, 10 ]]"
-    }
+    },
+    "improve_performance": false
 }
 ```
 ![Kohonen Activations](./resources/kohonen_activations.png)
