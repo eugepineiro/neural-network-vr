@@ -2233,6 +2233,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 1c3a7f0ed39407b478251707315145ff, type: 2}
   - {fileID: 2100000, guid: ab0b6f33242e34f4294f9451808b1dc2, type: 2}
   - {fileID: 2100000, guid: 494ba64f8aa6ed44692510a0c7ac5d58, type: 2}
+  - {fileID: 2100000, guid: 8161cfd890f2f544e94066219ad595d2, type: 2}
   screenPeriod: 2
 --- !u!4 &4123048257455960716
 Transform:
