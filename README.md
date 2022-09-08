@@ -109,3 +109,4 @@ Las activaciones se muestran por colores formando un heatmap en la capa de salid
 - Flechas: Rotar la red respecto de su centro 
 
 - L: Mostrar y ocultar las etiquetas de cada neurona
+- R: Restablecer la posición, rotación y escala iniciales de la red.
