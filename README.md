@@ -37,19 +37,54 @@ Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neu
 ```
 
 ### Autoencoder
-Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neuronas respectivamente, 2 neuronas en el espacio latente. Luego, la red se genera espejada quedando de la siguiente forma: [10,20,30,2,30, 20,10]. No es necesario por las capas del Decoder.
+Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neuronas respectivamente, 2 neuronas en el espacio latente. Luego, la red se genera espejada quedando de la siguiente forma: [5,3,2,3,5]. No es necesario por las capas del Decoder.
 ```json
 {
     "nn_type": "AUTOENCODER",
-    "layers": [10,20,30,2],
+    "layers": [5,3,2],
 }
 ```
+![Autoencoder](./resources/autoencoder.png)
 
 ### Kohonen
-Red de Kohonen
+Para visualizar una Red de Kohonen es necesario configurar más parámetros: 
+
+| Parámetro| Descripción                    | Opciones|
+| ------------- | ------------------------------ | ------------- |
+|"input_dimension"     |  Cantidad de neuronas en la capa de entrada que representan la dimesión de cada input  | int |
+|"grid_dimension"     |  Tamaño de la grilla de la capa de salida. | int |
+|"activations" (opcional)    |  String que representa la grilla de la capa de salida. Cada valor es la cantidad de activaciones correspondiente a cada neurona.   | string |
+
+
 ```json
- 
+{
+    "nn_type": "KOHONEN",
+    "layers": [5, 3, 2],
+    "kohonen": { 
+        "input_dimension": 10,
+        "grid_dimension": 3
+    }
+}
 ```
+![Kohonen](./resources/kohonen.png)
+
+En este ejemplo la grilla tiene tamaño 3x3 y se pueden ver la conexiones inhibitorias de las neuronas con ellas mismas y las conexiones con sus vecinas (Se asumió radio R=1)
+![Kohonen](./resources/kohonen_grid.png)
+
+Las activaciones se muestran por colores formando un heatmap en la capa de salida. 
+
+```json
+{
+    "nn_type": "KOHONEN",
+    "layers": [5, 3, 2],
+    "kohonen": { 
+        "input_dimension": 10,
+        "grid_dimension": 4, 
+        "activations": "[[100, 200, 300, 150],[100, 200, 30, 40],[100, 200, 300, 150],[50, 400, 30, 10 ]]"
+    }
+}
+```
+![Kohonen Activations](./resources/kohonen_activations.png)
 
 ## Interacción con Teclas
 - W: Trasladar la red hacia arriba 
@@ -59,5 +94,4 @@ Red de Kohonen
 
 - Flechas: Rotar la red respecto de su centro 
 
-- R: Volver la red a la posición inicial 
 - L: Mostrar y ocultar las etiquetas de cada neurona
