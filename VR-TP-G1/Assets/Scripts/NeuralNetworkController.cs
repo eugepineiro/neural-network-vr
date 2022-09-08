@@ -34,7 +34,9 @@ public class NeuralNetworkController : MonoBehaviour{
 
         JsonData j = JsonUtility.FromJson<JsonData>(jsonFile.text);
         low_cost = j.improve_performance;
-        Debug.Log(low_cost);
+        bool show_connections = j.show_connections;
+
+        Debug.Log(show_connections);
         if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
             network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
         }
@@ -46,7 +48,7 @@ public class NeuralNetworkController : MonoBehaviour{
 
             case NetworkType.MLP:
 				Debug.Log("MLP");
-				BuildMLP(network);
+				BuildMLP(network, show_connections);
                 break; 
             
             case NetworkType.AUTOENCODER: 
@@ -56,7 +58,7 @@ public class NeuralNetworkController : MonoBehaviour{
                 network.RemoveAt(network.Count - 1); // latent space is not replicated
                 network.Reverse();                   // mirror network
                 autoencoder.AddRange(network);
-				BuildMLP(autoencoder);
+				BuildMLP(autoencoder, show_connections);
                 break; 
 
             case NetworkType.KOHONEN:
@@ -77,7 +79,7 @@ public class NeuralNetworkController : MonoBehaviour{
                         }
                         has_activations = false;
                     }
-                    BuildKohonen(kohonen_activations, j.kohonen.input_dimension, has_activations);
+                    BuildKohonen(kohonen_activations, j.kohonen.input_dimension, has_activations, show_connections);
                     
                 } else {
                     Debug.Log("Faltan parametros para Kohonen");
@@ -86,7 +88,7 @@ public class NeuralNetworkController : MonoBehaviour{
         }
     }
     
-    private void BuildMLP(List<int> network)
+    private void BuildMLP(List<int> network, bool show_connections)
     {
         int layers_amount = network.Count;
 		int tallestLayer = 0;
@@ -99,8 +101,10 @@ public class NeuralNetworkController : MonoBehaviour{
 			if (layer.transform.childCount > tallestLayer)
 				tallestLayer = layer.transform.childCount;
 		}
-        for(int l=0; l < layers_amount-1; l++)
-            addConnections(l, l+1);
+        if(show_connections) {
+            for(int l=0; l < layers_amount-1; l++)
+                addConnections(l, l+1);
+        }
         float height = network.Max();
         float width = layers_amount-1;
         float s = 1;
@@ -220,7 +224,7 @@ public class NeuralNetworkController : MonoBehaviour{
             
     }
     
-    private void BuildKohonen(int[,] activations, int input_dimension, bool has_activations) { 
+    private void BuildKohonen(int[,] activations, int input_dimension, bool has_activations, bool show_connections) { 
         int height = activations.GetLength(0);
         int width = activations.GetLength(1);
         GameObject labels = new GameObject();
@@ -247,8 +251,10 @@ public class NeuralNetworkController : MonoBehaviour{
         for (int i = 0; i < width; i++)
             generateKohonenTopLayerColumn(top_neurons, height, i, width, activations,labels, has_activations);
 
-		addKohonenConnections(top_neurons, width, height);
-        addConnections(0, 1);
+        if (show_connections) {    
+            addKohonenConnections(top_neurons, width, height);
+            addConnections(0, 1);
+        }
         float network_h = Mathf.Max(network[0], height);
         float network_w = 5;
         float s = 1;

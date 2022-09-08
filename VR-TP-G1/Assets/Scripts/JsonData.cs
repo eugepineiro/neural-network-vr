@@ -10,5 +10,6 @@ namespace VRTP3
         public List<int> layers = new List<int>();
         public Kohonen kohonen;
         public bool improve_performance;
+        public bool show_connections;
     }
 }
