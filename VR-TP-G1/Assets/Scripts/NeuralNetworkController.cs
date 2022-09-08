@@ -28,7 +28,7 @@ public class NeuralNetworkController : MonoBehaviour{
  
     private enum NetworkType { MLP, AUTOENCODER, KOHONEN };
 
-    private bool low_cost = false;
+    private bool low_cost = true;
         
     void Start() {   
 
