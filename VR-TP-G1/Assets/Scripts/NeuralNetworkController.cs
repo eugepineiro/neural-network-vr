@@ -33,6 +33,8 @@ public class NeuralNetworkController : MonoBehaviour{
     void Start() {   
 
         JsonData j = JsonUtility.FromJson<JsonData>(jsonFile.text);
+        low_cost = j.improve_performance;
+        Debug.Log(low_cost);
         if (Enum.IsDefined(typeof(NetworkType), j.nn_type)) {
             network_type = (NetworkType)Enum.Parse(typeof(NetworkType), j.nn_type);
         }
