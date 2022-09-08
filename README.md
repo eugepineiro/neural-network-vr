@@ -1,5 +1,7 @@
 # VR-TP3
 
+![Autoencoder](./resources/portada.jpg)
+
 Se desarrolló una representación en Realidad Virtual de distintos modelos de Redes Neuronales. 
 
 El objetivo principal del proyecto consiste en que el usuario pueda aprender a distinguir arquitecturas de Redes Neuronales. La visualización en 3D de la totalidad de la red facilita la comprensión de la misma, teniendo en cuenta la cantidad de capas ocultas, la cantidad de neuronas en cada capa, cómo es la capa de salida y cómo son las conexiones entre las neuronas.
