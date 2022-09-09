@@ -8,6 +8,8 @@ El objetivo principal del proyecto consiste en que el usuario pueda aprender a d
 
 Además, se puede aprender de una forma interactiva e inmersiva, lo cual hace al aprendizaje más dinámico y entretenido para el usuario. 
 
+Se puede ver un video de la aplicación en Youtube. [Ver Video](https://youtu.be/CShKH8M6tdw)
+
 ## Modo de Uso 
 
 Se recibe un archivo de configuración `data.json` con las características de la red 
