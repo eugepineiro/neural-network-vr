@@ -1,0 +1,11 @@
+{
+    "nn_type": "KOHONEN",
+    "layers": [5, 3, 2],
+    "kohonen": { 
+        "input_dimension": 10,
+        "grid_dimension": 4, 
+        "activations": "[[100, 200, 300, 150],[100, 200, 30, 40],[100, 200, 300, 150],[50, 400, 30, 10 ]]"
+    },
+    "improve_performance": false, 
+    "show_connections": true
+}
