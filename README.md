@@ -40,8 +40,9 @@ Red con 10 neuronas en la capa de entrada, dos capas intermedias con 20 y 30 neu
 {
     "nn_type": "MLP",
     "layers": [10,20,30,40],
-    "improve_performance": false, 
-    "show_connections": true
+    "improve_performance": true, 
+    "show_connections": false
+}
 ```
 
 ### Autoencoder
