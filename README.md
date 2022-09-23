@@ -1,4 +1,4 @@
-# VR-TP3
+# Neural Network VR
 
 ![Autoencoder](./resources/portada.jpg)
 
