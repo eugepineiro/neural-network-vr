@@ -1,6 +1,6 @@
 # Neural Network VR
 
-![Autoencoder](./resources/portada.jpg)
+![Autoencoder](./resources/portada.png)
 
 Se desarrolló una representación en Realidad Virtual de distintos modelos de Redes Neuronales. 
 
